@@ -10,12 +10,12 @@ using Core.Interfaces;
 using Core.Specifications;
 using AutoMapper;
 using API.Dtos;
+using API.Errors;
+using Microsoft.AspNetCore.Http;
 
 namespace API.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class ProductsController : ControllerBase
+    public class ProductsController : BaseApiController
     {
         private readonly IGenericRepository<ProductType> _productTypeRepo;
         private readonly IGenericRepository<ProductBrand> _productBrandRepo;
@@ -42,10 +42,21 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)] /* tells swagger when 404 found error is generated from api
+                                                           All these are not mandatory to apply to all action methods.
+                                                           The clients will only only need the return type and input parameters
+                                                           for the api. which it identifies by default.
+                                                           in this eg:  ProductToReturnDto , id*/
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ProductToReturnDto>> GetProduct(int id)
         {
             var spec = new ProductsWithTypesAndBrandsSpecification(id);
             var product = await _productsRepo.GetEntityWithSpec(spec);
+
+            if(product == null)
+            {
+                return NotFound(new ApiResponse(404));
+            }
             
             return Ok(_mapper.Map<Product, ProductToReturnDto>(product));
         }
