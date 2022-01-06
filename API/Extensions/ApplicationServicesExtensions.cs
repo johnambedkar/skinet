@@ -15,6 +15,7 @@ namespace API.Extensions
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
             services.AddScoped(typeof(IGenericRepository<>),(typeof(GenericRepository<>)));
+            services.AddScoped(typeof(IBasketRepository),typeof(BasketRepository));
 
             // override default modelstate errors resoibse behavior of ApiController attribute. this configuration must be after service.AddControllers()
             services.Configure<ApiBehaviorOptions>(options => {
