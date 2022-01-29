@@ -18,6 +18,8 @@ namespace API.Extensions
             services.AddScoped(typeof(IGenericRepository<>),(typeof(GenericRepository<>)));
             services.AddScoped(typeof(IBasketRepository),typeof(BasketRepository));
             services.AddScoped<ITokenService,TokenService>();
+            services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             // override default modelstate errors resoibse behavior of ApiController attribute. this configuration must be after service.AddControllers()
             services.Configure<ApiBehaviorOptions>(options => {
                 options.InvalidModelStateResponseFactory = actionContext => 
